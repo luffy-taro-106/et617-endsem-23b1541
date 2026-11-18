@@ -98,7 +98,7 @@ S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1�
 </ul>
 
 <h2>D5 · Two contrasting learner scenarios (run on the live app)</h2>
-<p class="muted">Both paths were run on the live URL https://et617-23b1541.vercel.app at 18:51–18:53 on a 390 px phone viewport. The Gemini key had not yet been added to Vercel at that moment, so AI features show the clearly labelled “📘 Offline hint (AI unavailable)” fallback; the live-model outputs for the same inputs are recorded in D6.</p>
+<p class="muted">Both paths were run on the live URL https://et617-23b1541.vercel.app at 18:51–18:53 on a 390 px phone viewport. At that moment the Gemini key had not yet been added to Vercel, so those screens show the clearly labelled “📘 Offline hint (AI unavailable)” fallback — the app is fully usable without AI. After the key was added (19:00), screenshot <b>b1 was re-captured</b> and shows a live, validated Gemini hint (“✨ AI · checked”).</p>
 <h3>(a) Learner who responds correctly</h3>
 <p>Warm-up: nail sinks; tiny piece sinks. Idea: “It depends on what it is made of”. Lab: predicts the tiny eraser sinks, the iron nail sinks and the wooden log floats (after weighing it: 3.0 kg, 6000 cm³) → <b>“✅ Just as you predicted! Now try to break your idea.”</b> No hint ladder appears. Discover: types 0.5 first time → concept card. Check: Q1 c, Q2 b, Q3 0.92 + float, Q4 all correct, Q5 density explanation → score 2, no twin items inserted, goes straight to the summary with all three outcomes “✔ Strong”.</p>
 <div class="shots" id="shotsA">
@@ -109,7 +109,7 @@ S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1�
 <h3>(b) Learner showing misconception M1 (“heavy sinks, light floats”)</h3>
 <p>Warm-up: “the log sinks – it is heavier”. Idea chip: “Heavy things sink, light things float”. Lab mission adapts: “Test your idea with the heaviest and the lightest thing”. She predicts the 3 kg log <b>sinks</b> → it floats → <b>“🔍 A surprise! Scientists love these… not a mistake — it is new evidence”</b> + hint 1 of 4. She predicts the 16 g nail <b>floats</b> → it sinks → hint 2. She taps “✏️ Change my idea” and writes in her own mixed Marathi/English: v2 “jad vastu budtat pan te tyanchya size pramane — heavy for its size things sink” (shown as <s>v1</s> → v2). Because she dropped two objects without weighing them, the app also nudges her: “Tip: weigh it ⚖️ and measure it 🧪 — the numbers hide a pattern” (interaction-based adaptivity, visible in b2). In Check she picks “log sinks, nail floats” → M1 feedback + twin Q1b; she repeats M1 on the twin → <b>“🧪 Show me in the lab”</b> sends her back to the log/nail pair, then back to Check. Summary shows “↻ Practise once more” for LO1/LO3 (no red crosses, no score) and her confidence change.</p>
 <div class="shots" id="shotsB">
- <figure><img src="img/b1.jpg" alt=""><figcaption>b1 · Surprise support after a failed prediction</figcaption></figure>
+ <figure><img src="img/b1.jpg" alt=""><figcaption>b1 · Surprise support after a failed prediction (live Gemini hint)</figcaption></figure>
  <figure><img src="img/b2.jpg" alt=""><figcaption>b2 · Hypothesis revised v1 → v2</figcaption></figure>
  <figure><img src="img/b3.jpg" alt=""><figcaption>b3 · M1 feedback + adaptive “Show me in the lab”</figcaption></figure>
 </div>
@@ -181,6 +181,7 @@ USER: Student answer: """The log is light so it floats"""</pre>
 <tr><td>AI-3 evaluate</td><td>“It is not about weight, it is how much mass is packed in each cm3 compared to water…”</td><td><code>score 2, none</code> · “Great job! You clearly explained density by comparing mass in a given space to water. Next step: Try to use this idea to explain why a heavy metal ship can float too.”</td><td>gemini-3.5-flash-lite</td></tr>
 <tr><td>AI-3 evaluate</td><td>“The log is light so it floats”</td><td><code>score 0, mass</code> · “You are thinking about how heavy the log is! To understand floating, try comparing the log's mass to the amount of space it takes up, and see how that compares to water.”</td><td>gemini-3.1-flash-lite</td></tr>
 </table>
+<p><b>Re-verified on the live deployment (https://et617-23b1541.vercel.app/api/ai, 19:00):</b> classify → <code>{"label":"mass","confidence":0.95}</code> in 1.7 s; nudge → “Sneha, look at that big wooden log—it is quite heavy at 3000 grams, but what did it do in the water instead of sinking?” in 1.9 s; evaluate (“The log is light so it floats”) → <code>score 0, mass</code> in 2.2 s; all from <code>gemini-3.5-flash-lite</code>.</p>
 <p><b>Reliability handling observed in practice:</b> during the exam Gemini returned 503 “high demand” and 404 (model retired for new users: gemini-2.5-flash) errors. The endpoint therefore tries a chain of models (3.5-flash-lite → 3.1-flash-lite → flash-lite-latest → 3.5-flash → flash-latest → 3.8-flash), 4.5 s each, ~9 s total, then the browser falls back to the labelled offline content. The API key is stored only as a Vercel environment variable (never committed).</p>
 
 <h2>D7 · Pedagogical rationale</h2>
