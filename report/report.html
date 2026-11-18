@@ -84,16 +84,24 @@ S2 ─▶ S3 Lab: pick object × size × liquid → ⚖️ balance / 🧪 cylind
         │                        offline ladder fallback) → [Change my idea → S2 (v2)] or [Test more]
         └─ "I'm stuck" → S3c hint (escalates rung)
 S3 (≥3 drops, ≥1 float &amp; ≥1 sink) ─▶ S4 Discover: she computes mass ÷ volume for one of HER objects
-        → table sorts by density with a water line at 1 → concept card built from her own data
+        → table sorts by density with a water line at 1 → density number line → concept card from her data
 S4 ─▶ S5 Check: Q1 → (M1? → Q1b twin → M1 again? → back to S3 with log/nail preset → back to S5)
         → Q2 → (M2? → Q2b twin) → Q3 numeric → Q4 sort → Q5 explanation (AI evaluator + rubric)
-S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1→v2, confidence before→after,
+S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1→v2, confidence before→after, journey stats,
         next 10-minute mission (salt water).          About screen: card, ID, privacy, learning log.</pre>
+<h3>Interaction and tool features</h3>
+<ul>
+<li><b>Virtual tank</b> with physically correct float depth (“Floats · 50% under”); floaters <b>bob</b> on the surface, sinkers sink with a trail of <b>bubbles</b>.</li>
+<li><b>Topic-specific tools:</b> ⚖️ balance (mass), 🧪 measuring cylinder / overflow can (volume by displacement), liquid picker (tap water, very salty water, cooking oil), lab notebook, and a <b>📏 density number line</b> on the Discover screen where her own objects slide into place left (floats) or right (sinks) of the water line at 1 g/cm³.</li>
+<li><b>Personal:</b> the learner types her own first name on the Welcome screen; it is used on screens and in AI hints. A Marathi glossary (घनता, वस्तुमान, आकारमान, तरंगणे, बुडणे) supports the home language.</li>
+<li><b>Transparent adaptivity:</b> the About screen explains the four adaptation rules in learner language and shows “My mission so far” (active time, sessions, drops, surprises, hints, idea versions) plus the full learning log.</li>
+</ul>
 <h3>How C4 (10-minute sessions) is visibly implemented</h3>
 <ul>
 <li>One complete sequence of 7 states budgeted at 10 min (0.5 + 1 + 1 + 3.5 + 1.5 + 2 + 0.5). Header shows “Step 3 of 6 · Lab · about 8 min left” — an <i>estimate</i>, deliberately <b>not a countdown</b> (L5 anxiety).</li>
 <li><b>Save &amp; stop</b> button on every screen → “Saved! You stopped at Step 3: Lab. Your ideas and 4 experiment(s) are saved on this phone.”</li>
 <li>Re-opening the app (or a reload / closed browser) shows “👋 Welcome back! You stopped at Step N” with <b>Continue from Step N</b>; all experiments, hypothesis versions, check answers and the hint level are restored (localStorage).</li>
+<li><b>Active time is measured</b> (only while the app is open and visible) and shown on the Summary as “⏱️ Fits inside one 10-minute mission” with the number of sessions, so C4 is verifiable, not just claimed.</li>
 <li>The summary ends with the <i>next</i> 10-minute mission (salt water) so learning is spaced across evenings.</li>
 </ul>
 
@@ -137,11 +145,11 @@ USER: Student hypothesis: """heavy for its size things sink"""</pre>
 
 <h3>AI-2 · Socratic nudge after an unsuccessful experiment (design-challenge feature)</h3>
 <table><tr><th>What it does</th><td>Writes ONE short question that helps her notice what to test next, grounded in her actual objects and numbers, at hint level 1–4.</td></tr>
-<tr><th>Input</th><td>Hint level, hypothesis + label, last experiment (object, liquid, predicted, result, mass, volume), last 6 notebook rows.</td></tr>
+<tr><th>Input</th><td>Learner’s first name (sanitised to letters, ≤ 24 chars), hint level, hypothesis + label, last experiment (object, liquid, predicted, result, mass, volume), last 6 notebook rows.</td></tr>
 <tr><th>Output</th><td><code>{"hint": "…?"}</code></td></tr>
 <tr><th>Checks</th><td>≤ 40 words; must contain “?”; for levels 1–3 it is <b>rejected if it reveals the answer</b> (regex: dens·, divide, mass ÷/÷ volume, per cm, g/cm); rejected if it contains “wrong / incorrect / stupid / silly”.</td></tr>
 <tr><th>Fallback</th><td>Pre-written 4-rung ladder per misconception (notice → compare → control one variable → measure both), labelled “📘 Offline hint (AI unavailable)”.</td></tr></table>
-<pre>SYSTEM: You are a kind lab partner for Sneha, 13, in Class 7. She failed this topic once and gets anxious easily.
+<pre>SYSTEM: You are a kind lab partner for a 13-year-old Class 7 learner (name given below). She failed this topic once and gets anxious easily.
 Her experiment result did NOT match her prediction (or she is stuck).
 Write ONE short Socratic question (max 30 words, simple English, Class 6 vocabulary) that helps her notice what to test next.
 Rules:
@@ -151,7 +159,8 @@ Rules:
 - End with a question mark.
 Hint level (1-4): 1 = notice the surprise; 2 = compare with another object in her table; 3 = suggest changing only ONE variable; 4 = suggest weighing AND measuring the volume of two objects and comparing grams in each 1 cm3 with water.
 Reply ONLY with JSON: {"hint": "&lt;question&gt;"}
-USER: Hint level: 1
+USER: Learner name: Sneha
+Hint level: 1
 Her hypothesis: "Heavy things sink, light things float" (type: mass)
 Last experiment: {"object":"Wooden log","liquid":"Tap water","predicted":"sink","result":"float","mass_g":3000,"volume_cm3":6000}
 Her lab notebook (latest first): [{"object":"Wooden log","liquid":"Tap water","mass_g":3000,"volume_cm3":6000,"result":"float"}]</pre>
