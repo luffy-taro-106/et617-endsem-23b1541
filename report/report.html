@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>ET 617 End-Sem Report · 23B1541 · Dubki Lab</title>
+<style>
+ @page{size:A4;margin:16mm 14mm}
+ body{font:10.5pt/1.45 -apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;color:#13302e;max-width:820px;margin:0 auto}
+ h1{font-size:20pt;margin:0 0 4px;color:#0f5c6e} h2{font-size:14pt;color:#0f5c6e;border-bottom:2px solid #cfe3e0;padding-bottom:3px;margin:22px 0 8px;page-break-after:avoid}
+ h3{font-size:11.5pt;margin:14px 0 4px;page-break-after:avoid} p{margin:4px 0 6px}
+ table{border-collapse:collapse;width:100%;margin:6px 0 10px;font-size:9.5pt;page-break-inside:auto} th,td{border:1px solid #cfe3e0;padding:4px 6px;text-align:left;vertical-align:top} th{background:#eef6f5}
+ tr{page-break-inside:avoid}
+ code,pre{font:8.6pt/1.35 ui-monospace,Menlo,monospace} pre{background:#f4f8f7;border:1px solid #dbe9e6;border-radius:6px;padding:8px;white-space:pre-wrap;page-break-inside:avoid}
+ .muted{color:#56706d} .tag{display:inline-block;background:#eef6f5;border-radius:10px;padding:0 7px;font-size:8.5pt;font-weight:600;color:#0f5c6e}
+ .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;page-break-inside:avoid} .shots figure{margin:0} .shots img{width:100%;border:1px solid #cfe3e0;border-radius:6px} figcaption{font-size:8pt;color:#56706d}
+ .card{border:1px solid #cfe3e0;border-radius:8px;padding:8px 10px;margin:6px 0;page-break-inside:avoid}
+ ul,ol{margin:4px 0 6px 18px;padding:0} li{margin:2px 0}
+</style></head><body>
+
+<h1>Dubki Lab — “Float or Sink?” Inquiry Lab</h1>
+<p class="muted">ET 617 End-Semester Examination · 18 Nov 2026 · <b>Darshan Sonawane · 23B1541</b></p>
+
+<h2>Identity card</h2>
+<table>
+<tr><th>Roll no. (ID)</th><td><b>23B1541</b></td></tr>
+<tr><th>P – Problem</th><td>P5 – Inquiry-based virtual laboratory</td></tr>
+<tr><th>T – Topic</th><td>P5-T2 – Floating and sinking: density (Class 6–8)</td></tr>
+<tr><th>L – Learner context</th><td>L5 – Learner repeating the topic after failing it once; high anxiety, low self-efficacy</td></tr>
+<tr><th>C – Design constraint</th><td>C4 – 10-minute sessions (one full sequence ≤ 10 min; stop and resume where they left off)</td></tr>
+<tr><th>Live app</th><td><b>https://et617-23b1541.vercel.app</b></td></tr>
+<tr><th>Repository</th><td>https://github.com/luffy-taro-106/et617-endsem-23b1541</td></tr>
+<tr><th>Stack</th><td>Plain HTML/CSS/JavaScript (no framework, no template, no UI library) + one Vercel serverless function <code>/api/ai</code> calling Google Gemini. No code reused from the course project.</td></tr>
+</table>
+
+<h2>D1 · Educational problem</h2>
+<p>Students who fail “Floating and sinking” usually hold intuitive rules — <b>“heavy things sink, light things float”</b> and <b>“big things sink, small things float”</b> — that rote re-reading of the textbook does not change. For a repeat learner these beliefs come with anxiety: every red cross confirms “I am not a science person”, so she avoids practice. She needs a <b>safe place to be wrong</b>: a lab where her own prediction is tested, where a failed experiment is treated as evidence rather than a mark against her, and where she discovers <i>for herself</i> that it is mass <i>compared with</i> volume (density), not mass or size alone, that decides floating. Because she only gets her mother’s phone for a few minutes, each visit must be one complete 10-minute mission that resumes exactly where she stopped.</p>
+<h3>Learning outcomes</h3>
+<ol>
+<li><b>LO1 – Predict</b> whether an object will float or sink in water by comparing its density with water’s density (1 g/cm³).</li>
+<li><b>LO2 – Calculate</b> an object’s density from its mass (balance) and volume (displacement), in g/cm³.</li>
+<li><b>LO3 – Explain</b>, using evidence from her own experiments, why neither mass alone nor size alone decides floating (e.g. a 3 kg log floats but a 16 g iron nail sinks).</li>
+</ol>
+<h3>Context of use</h3>
+<p>At home, about 9:00–9:15 pm after dinner, on her mother’s shared Android phone (360 px wide, patchy 4G), alone, one 10-minute mission per evening; also usable on the school computer-lab desktop.</p>
+
+<h2>D2 · Learner persona (expanded from L5)</h2>
+<table>
+<tr><th>Name, age</th><td><b>Sneha Pawar</b>, 13, Class 7 (repeating the Science term after failing the unit test), semi-English-medium municipal school, Nashik</td></tr>
+<tr><th>Prior knowledge (prerequisites)</th><td>Knows mass in g/kg and can read a kitchen scale; knows volume as “space taken”; has seen a measuring cylinder but never used displacement; division with decimals is shaky (uses a calculator).</td></tr>
+<tr><th>Misconception M1 (mass)</th><td>“Heavy objects sink, light objects float.”</td></tr>
+<tr><th>Misconception M2 (size)</th><td>“Big things sink, small things float — if you cut a sinking object into a tiny piece, the piece will float.”</td></tr>
+<tr><th>Device</th><td>Mother’s Android phone (shared), one hand, small screen; sometimes the school lab desktop.</td></tr>
+<tr><th>Time</th><td>~10 minutes after dinner; often interrupted (phone needed back).</td></tr>
+<tr><th>Language</th><td>Marathi at home; studies in English. Needs short, simple English sentences; mixes Marathi/Hindi words when writing.</td></tr>
+<tr><th>Motivation &amp; affect</th><td>Wants to pass the re-test and stop being called “weak”. Freezes at timers, red crosses and scores. Low self-efficacy: “I am just not a science person.” Enjoys hands-on activities and “seeing it happen”.</td></tr>
+</table>
+
+<h2>D3 · Educational content (one complete learning activity)</h2>
+<h3>Concept explanation (shown after she computes density herself, built from her own data)</h3>
+<div class="card">“Let us look at <b>your own</b> evidence: (1) The <b>wooden log (3.0 kg) floated</b>. So it is <i>not weight alone</i>. (2) The <b>iron nail (only 2 cm³) sank</b>. So it is <i>not size alone</i>. (3) What decides is <b>how much mass is packed into each cm³</b>. Scientists call this <b>density = mass ÷ volume</b>. 💧 Water has <b>1 g in each cm³</b>. Less than 1 → floats. More than 1 → sinks. Cutting iron smaller does not change its density — that is why the tiny nail still sinks.”</div>
+<h3>Lab data (physics computed in code, not by AI)</h3>
+<p>Objects (g/cm³): wood 0.5, apple 0.8, candle wax 0.9, potato 1.08, rubber eraser 1.3, pebble 2.6, iron 7.9 · Sizes: tiny 2, small 20, big 500, huge 6000 cm³ (mass = density × volume) · Liquids: tap water 1.0, very salty water 1.2, cooking oil 0.92. A floating object sits with a fraction ρ<sub>object</sub>/ρ<sub>liquid</sub> under the surface (e.g. wood “50% under”).</p>
+<h3>Tasks (9 tasks, 5 formats)</h3>
+<table>
+<tr><th>#</th><th>Task (format)</th><th>Model answer</th><th>Feedback: correct</th><th>Feedback: M1 (mass)</th><th>Feedback: M2 (size)</th></tr>
+<tr><td>W1–W2</td><td>Warm-up predictions (MCQ, ungraded diagnostic): log vs nail; tiny piece of a sinking iron block</td><td>Nail sinks; tiny piece sinks</td><td colspan="3">No right/wrong shown: “We will test your guesses in the lab.” Answers set her profile (M1 / M2) and the lab mission.</td></tr>
+<tr><td>T1</td><td>Write/choose a hypothesis (choice + free text)</td><td>“It depends on how heavy it is for its size, compared with water.”</td><td colspan="3">AI/keyword reads the idea type (“Your idea is about weight…”) — no judgement, then: “Let’s see if the water agrees!”</td></tr>
+<tr><td>T2</td><td>Predict-then-drop experiments (simulation; ≥3 runs, ≥1 float and ≥1 sink)</td><td>Log floats, nail sinks, potato sinks in water / floats in salt water</td><td>“✅ Just as you predicted! Now try to <i>break</i> your idea.”</td><td>“🔍 A surprise! … You expected weight to decide. Look at your result again: was the heavier thing the one that sank?” (+ 3 more rungs)</td><td>“You expected size to decide. Did the size of this object match what happened?” … “Keep the material the same and change ONLY the size.”</td></tr>
+<tr><td>T3</td><td>Calculate density for one of her own objects (numeric)</td><td>e.g. wooden log 3000 g ÷ 6000 cm³ = 0.5 g/cm³</td><td>“Yes! 0.5 g in each cm³ 🎉” then the table sorts with a water line at 1.</td><td colspan="2">Try 1: “Close try! Remember: grams ÷ cm³. Here that is 3000 ÷ 6000.” Try 2: worked solution “3000 ÷ 6000 = 0.5”.</td></tr>
+<tr><td>Q1</td><td>MCQ: 3 kg log and 16 g nail in a pond</td><td>Log floats, nail sinks</td><td>“Weight alone does not decide. Each cm³ of wood holds only 0.5 g — less than water’s 1 g…”</td><td>(option “log sinks, nail floats”) “You are thinking ‘heavy sinks, light floats’. Many people think this! But remember your lab: the 3 kg log floated…” → twin item Q1b</td><td>—</td></tr>
+<tr><td>Q1b</td><td>Twin MCQ (adaptive): 10 kg bamboo raft vs 5 g steel coin</td><td>The coin sinks</td><td>“Heavy-but-spread-out floats, light-but-packed sinks. 💪”</td><td>“This idea is sticky! Let’s test it once more in the lab…” → <b>button sends her to the lab with the log/nail pair</b></td><td>—</td></tr>
+<tr><td>Q2</td><td>MCQ: iron key filed down to a tiny speck</td><td>Sinks — still iron</td><td>“Cutting changes the size, not the material…”</td><td>—</td><td>(option “float, it is tiny”) “But a tiny piece is still iron! Remember your lab: the tiny iron nail sank just like the huge iron block…” → twin Q2b (giant log)</td></tr>
+<tr><td>Q3</td><td>Numeric + predict: ice cube 92 g, 100 cm³</td><td>0.92 g/cm³ → floats (92% under)</td><td>“Perfect! … That is why icebergs hide under the sea!”</td><td>(predicts sink) “92 g sounds heavy, but what matters is 92 g spread over 100 cm³…”</td><td>Calc slip: “grams ÷ cm³ = 92 ÷ 100 = 0.92.”</td></tr>
+<tr><td>Q4</td><td>Sort (tap Float/Sink): coconut 900 g/1200 cm³, marble 5 g/2 cm³, pumpkin 3000 g/3750 cm³, brick 2400 g/1200 cm³</td><td>F, S, F, S (0.75, 2.5, 0.8, 2.0)</td><td>“All four right! You used grams-per-cm³ like a scientist.”</td><td>“Some heavy things float and some light things sink here. Try dividing grams by cm³…”</td><td>“Big is not the same as sinking. Divide grams by cm³ and compare with 1.”</td></tr>
+<tr><td>Q5</td><td>Explain (free text, AI + rubric): Rohit says “the log floated because it is light” — but it weighs 3 kg</td><td>“Not weight alone: how much mass is packed into each cm³ (density = mass ÷ volume). Wood 0.5 g/cm³ &lt; water 1 g/cm³, so it floats.”</td><td>Score 2: “Brilliant! You compared mass with space and with water…”</td><td>Score 0 (mass): “You are still using weight. Remember the 3 kg log floated! Talk about how much mass is packed into each cm³.”</td><td>Score 0 (size): “Size alone did not decide in your lab. Talk about mass AND volume together, compared with water.”</td></tr>
+</table>
+
+<h2>D4 · Working application</h2>
+<p><b>URL:</b> https://et617-23b1541.vercel.app · Identity token <b>23B1541</b> is in the footer of every screen and on the About screen.</p>
+<h3>Screen map (states, inputs, outputs, transitions)</h3>
+<pre>S0 Welcome / Resume ── start ─▶ S1 Warm-up (2 ungraded predictions + confidence 1–5)
+        ▲ (Save &amp; stop on every screen → "Saved" screen → reopen → "Welcome back, Step N" → resume)
+S1 ─▶ S2 My idea (hypothesis chips or own words → AI classifier → "your idea is about …")
+S2 ─▶ S3 Lab: pick object × size × liquid → ⚖️ balance / 🧪 cylinder → predict → Drop
+        ├─ prediction matched → S3b "Just as you predicted – now try to break your idea"
+        ├─ prediction failed  → S3a Surprise support: hint rung 1→4 (AI Socratic question, filtered;
+        │                        offline ladder fallback) → [Change my idea → S2 (v2)] or [Test more]
+        └─ "I'm stuck" → S3c hint (escalates rung)
+S3 (≥3 drops, ≥1 float &amp; ≥1 sink) ─▶ S4 Discover: she computes mass ÷ volume for one of HER objects
+        → table sorts by density with a water line at 1 → concept card built from her own data
+S4 ─▶ S5 Check: Q1 → (M1? → Q1b twin → M1 again? → back to S3 with log/nail preset → back to S5)
+        → Q2 → (M2? → Q2b twin) → Q3 numeric → Q4 sort → Q5 explanation (AI evaluator + rubric)
+S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1→v2, confidence before→after,
+        next 10-minute mission (salt water).          About screen: card, ID, privacy, learning log.</pre>
+<h3>How C4 (10-minute sessions) is visibly implemented</h3>
+<ul>
+<li>One complete sequence of 7 states budgeted at 10 min (0.5 + 1 + 1 + 3.5 + 1.5 + 2 + 0.5). Header shows “Step 3 of 6 · Lab · about 8 min left” — an <i>estimate</i>, deliberately <b>not a countdown</b> (L5 anxiety).</li>
+<li><b>Save &amp; stop</b> button on every screen → “Saved! You stopped at Step 3: Lab. Your ideas and 4 experiment(s) are saved on this phone.”</li>
+<li>Re-opening the app (or a reload / closed browser) shows “👋 Welcome back! You stopped at Step N” with <b>Continue from Step N</b>; all experiments, hypothesis versions, check answers and the hint level are restored (localStorage).</li>
+<li>The summary ends with the <i>next</i> 10-minute mission (salt water) so learning is spaced across evenings.</li>
+</ul>
+
+<h2>D5 · Two contrasting learner scenarios (run on the live app)</h2>
+<h3>(a) Learner who responds correctly</h3>
+<p>Warm-up: nail sinks; tiny piece sinks. Idea: “It depends on what it is made of”. Lab: predicts the wooden log floats → <b>“✅ Just as you predicted! Now try to break your idea.”</b> No hint ladder appears. Discover: types 0.5 first time → concept card. Check: Q1 c, Q2 b, Q3 0.92 + float, Q4 all correct, Q5 density explanation → score 2, no twin items inserted, goes straight to the summary with all three outcomes “✔ Strong”.</p>
+<div class="shots" id="shotsA">
+ <figure><img src="img/a1.png" alt=""><figcaption>a1 · Prediction confirmed</figcaption></figure>
+ <figure><img src="img/a2.png" alt=""><figcaption>a2 · Check answered correctly</figcaption></figure>
+ <figure><img src="img/a3.png" alt=""><figcaption>a3 · Summary – all outcomes strong</figcaption></figure>
+</div>
+<h3>(b) Learner showing misconception M1 (“heavy sinks, light floats”)</h3>
+<p>Warm-up: “the log sinks – it is heavier”. Idea chip: “Heavy things sink, light things float”. Lab mission adapts: “Test your idea with the heaviest and the lightest thing”. She predicts the 3 kg log <b>sinks</b> → it floats → <b>“🔍 A surprise! Scientists love these… not a mistake — it is new evidence”</b> + hint 1 of 4. She predicts the 16 g nail <b>floats</b> → it sinks → hint 2. She taps “Change my idea” → v2 “heavy for its size things sink” (shown as v1 → v2). In Check she picks “log sinks, nail floats” → M1 feedback + twin Q1b; she repeats M1 on the twin → <b>“🧪 Show me in the lab”</b> sends her back to the log/nail pair, then back to Check. Summary shows “↻ Practise once more” for LO1/LO3 (no red crosses, no score) and her confidence change.</p>
+<div class="shots" id="shotsB">
+ <figure><img src="img/b1.png" alt=""><figcaption>b1 · Surprise support after a failed prediction</figcaption></figure>
+ <figure><img src="img/b2.png" alt=""><figcaption>b2 · Hypothesis revised v1 → v2</figcaption></figure>
+ <figure><img src="img/b3.png" alt=""><figcaption>b3 · M1 feedback + adaptive “Show me in the lab”</figcaption></figure>
+</div>
+
+<h2>D6 · AI functionality specification</h2>
+<p>Model: Google Gemini (<code>gemini-2.5-flash</code>, falling back to <code>gemini-flash-latest</code>) via <code>/api/ai</code> (Vercel serverless; key only in the <code>GEMINI_API_KEY</code> environment variable). temperature 0.3, JSON output mode, 9 s client timeout. <b>The physics (float/sink, depth, masses, volumes) is never produced by AI</b> — it is computed in code, so experiment results are always correct. Every AI output is validated on the server <i>and again</i> in the browser before the learner sees it.</p>
+
+<h3>AI-1 · Hypothesis classifier</h3>
+<table><tr><th>What it does</th><td>Reads the learner’s free-text hypothesis (English mixed with Marathi/Hindi words) and labels its idea type, which selects the lab mission and the hint ladder.</td></tr>
+<tr><th>Input</th><td>The hypothesis text (≤300 chars).</td></tr>
+<tr><th>Output</th><td><code>{"label": mass|size|density|shape_air|material|other, "confidence": 0–1, "evidence": "quote"}</code></td></tr>
+<tr><th>Checks</th><td>Label must be in the enum; confidence must be a number ≥ 0.6; otherwise the keyword classifier’s label is used. A keyword classifier always runs too and is logged for comparison.</td></tr>
+<tr><th>Fallback</th><td>Keyword classifier (e.g. heav/weigh/light/vajan/bhari → mass; big/small/size/mota/lahan → size). UI shows “📘 read offline”.</td></tr></table>
+<pre>SYSTEM: You classify a Class 7 Indian student's hypothesis about why things float or sink.
+Labels:
+- "mass": weight/heaviness alone decides (heavy sinks, light floats).
+- "size": bigness alone decides (big sinks, small floats, or the reverse).
+- "density": compares mass with volume/space/size ("heavy for its size", "how tightly packed", "compared with water").
+- "shape_air": air inside, holes, hollow, flat shape.
+- "material": what it is made of (wood, iron, plastic) without mentioning mass and volume.
+- "other": anything else.
+The student may mix English with Marathi or Hindi words (e.g. "jad", "halka", "bhari", "vajan" = heavy/light/weight; "mota", "lahan", "chhota" = big/small).
+Reply ONLY with JSON: {"label": "&lt;one label&gt;", "confidence": &lt;0..1&gt;, "evidence": "&lt;short quote from the student&gt;"}
+USER: Student hypothesis: """heavy for its size things sink"""</pre>
+
+<h3>AI-2 · Socratic nudge after an unsuccessful experiment (design-challenge feature)</h3>
+<table><tr><th>What it does</th><td>Writes ONE short question that helps her notice what to test next, grounded in her actual objects and numbers, at hint level 1–4.</td></tr>
+<tr><th>Input</th><td>Hint level, hypothesis + label, last experiment (object, liquid, predicted, result, mass, volume), last 6 notebook rows.</td></tr>
+<tr><th>Output</th><td><code>{"hint": "…?"}</code></td></tr>
+<tr><th>Checks</th><td>≤ 40 words; must contain “?”; for levels 1–3 it is <b>rejected if it reveals the answer</b> (regex: dens·, divide, mass ÷/÷ volume, per cm, g/cm); rejected if it contains “wrong / incorrect / stupid / silly”.</td></tr>
+<tr><th>Fallback</th><td>Pre-written 4-rung ladder per misconception (notice → compare → control one variable → measure both), labelled “📘 Offline hint (AI unavailable)”.</td></tr></table>
+<pre>SYSTEM: You are a kind lab partner for Sneha, 13, in Class 7. She failed this topic once and gets anxious easily.
+Her experiment result did NOT match her prediction (or she is stuck).
+Write ONE short Socratic question (max 30 words, simple English, Class 6 vocabulary) that helps her notice what to test next.
+Rules:
+- Never say she is wrong. Never give the answer.
+- Do NOT use the words: density, dense, denser, divide, "mass divided by volume", "per cm3", "g/cm3".
+- Refer to her actual objects and numbers.
+- End with a question mark.
+Hint level (1-4): 1 = notice the surprise; 2 = compare with another object in her table; 3 = suggest changing only ONE variable; 4 = suggest weighing AND measuring the volume of two objects and comparing grams in each 1 cm3 with water.
+Reply ONLY with JSON: {"hint": "&lt;question&gt;"}
+USER: Hint level: 1
+Her hypothesis: "Heavy things sink, light things float" (type: mass)
+Last experiment: {"object":"Wooden log","liquid":"Tap water","predicted":"sink","result":"float","mass_g":3000,"volume_cm3":6000}
+Her lab notebook (latest first): [{"object":"Wooden log","liquid":"Tap water","mass_g":3000,"volume_cm3":6000,"result":"float"}]</pre>
+
+<h3>AI-3 · Explanation evaluator (Check Q5)</h3>
+<table><tr><th>What it does</th><td>Scores her 1–2-line explanation 0–2 against a rubric, tags the misconception, writes warm feedback.</td></tr>
+<tr><th>Input</th><td>Her answer text (≤500 chars).</td></tr>
+<tr><th>Output</th><td><code>{"score":0|1|2, "misconception":"mass"|"size"|"none", "feedback":"…"}</code></td></tr>
+<tr><th>Checks</th><td>Enum/score validation; feedback ≤ 50 words and must not contain “wrong/incorrect”; <b>cross-check with a rule-based rubric</b> — if the AI and the rule differ by 2 points (e.g. AI gives 2 to “it is light”), the AI result is discarded.</td></tr>
+<tr><th>Fallback</th><td>Rule-based rubric (density/packed/for its size/mass+volume words AND water/1 g → 2; density words only → 1; else 0 with M1/M2 tag) with pre-written feedback, labelled offline. Model answer is always shown.</td></tr></table>
+<pre>SYSTEM: You assess a Class 7 student's short explanation.
+Question: Rohit says "The log floated because it is light." But the log weighs 3 kg. In 1-2 lines, explain what really decides whether something floats.
+Rubric:
+2 = says it depends on mass compared with volume/size (density, "heavy for its size", "how much mass is packed in each cm3") AND compares with water.
+1 = mentions density, or mass together with volume/size, but no comparison with water.
+0 = only weight/heaviness, or only size, or unrelated.
+Misconception: "mass" if the reasoning uses weight alone; "size" if size alone; otherwise "none".
+Feedback: max 35 words, warm, simple English, start with what is good, never use the word "wrong", give one next step.
+Reply ONLY with JSON: {"score": 0|1|2, "misconception": "mass"|"size"|"none", "feedback": "&lt;text&gt;"}
+USER: Student answer: """The log is light so it floats"""</pre>
+
+<h2>D7 · Pedagogical rationale</h2>
+<h3>How the design supports learning</h3>
+<ul>
+<li><b>Predict–Observe–Explain + conceptual change.</b> Every drop requires a prediction first. A discrepant result (the 3 kg log floating) creates the <i>dissatisfaction</i> with M1/M2 that conceptual-change theory says is needed; density is introduced only afterwards, when it is <i>intelligible</i> (she computes it from her own numbers) and <i>fruitful</i> (it explains every row in her notebook).</li>
+<li><b>Discovery from her own data.</b> The concept card is generated from <i>her</i> experiments (“The wooden log (3.0 kg) floated…”), and the density table is sorted with a water line at 1 g/cm³, so the rule is seen, not told.</li>
+<li><b>Topic-specific tools</b> (balance, measuring cylinder/overflow can, liquid picker, notebook) and a physically correct float depth (wood 50% under, wax 90% under) let her reason with real quantities.</li>
+<li><b>Control of variables</b> is taught implicitly through mission presets (same material, different sizes) and hint rung 3.</li>
+</ul>
+<h3>Feedback and scaffolding</h3>
+<ul>
+<li><b>Fading hint ladder</b> (4 rungs): notice → compare → change one variable → measure both. The rung rises with each failed prediction or “I’m stuck” (performance + interaction adaptivity).</li>
+<li><b>Misconception-specific feedback</b> on every check item, always pointing back to her own lab evidence; model answer shown after each item.</li>
+<li><b>Adaptive rule in Check:</b> misconception answer → targeted feedback + a twin item; misconception again on the twin → “Show me in the lab” with the decisive pair preloaded, then back to the check.</li>
+<li><b>Profile adaptivity:</b> warm-up answers + hypothesis choose the lab mission (mass-mission vs size-mission).</li>
+</ul>
+<h3>Answer to the P5 design challenge</h3>
+<p><i>How will the system support learning from an unsuccessful experiment without simply revealing the correct answer?</i></p>
+<ol>
+<li><b>Reframe:</b> a failed prediction is shown in amber as “🔍 A surprise! Scientists love these. This is not a mistake — it is new evidence.” Never red, never “wrong”.</li>
+<li><b>Question, don’t tell:</b> the support is a single Socratic question tied to her objects and numbers (AI-generated, or the offline ladder). Answer-revealing words (density, mass ÷ volume, g/cm³) are <b>blocked by a filter</b> for rungs 1–3; rung 4 only tells her <i>what to measure</i>, never the rule.</li>
+<li><b>Agency:</b> she chooses “✏️ Change my idea” (new hypothesis version, v1 → v2 shown and celebrated) or “🧪 Test more first”.</li>
+<li><b>The answer emerges from her data:</b> the word “density” appears only after she computes mass ÷ volume for one of her own objects in the Discover step.</li>
+</ol>
+<p>Shown in D5(b): the wooden log prediction fails → surprise card with hint 1 of 4 → second failure (nail) raises it to hint 2 → she revises her idea.</p>
+<h3>How the learner context (L5) shaped the design</h3>
+<ul>
+<li>No scores, timers, red crosses or “wrong”; warm-up is explicitly “no marks”; outcomes shown as “✔ Strong / ↻ Practise once more”.</li>
+<li>Confidence (self-efficacy) is asked before and after and the change is reflected back: “That came from your own evidence” (mastery experience).</li>
+<li>Twin items give a second chance instead of a penalty; worked solution on the second calculation attempt.</li>
+<li>Short sentences, conversational “Let us…”, highlighted key phrases, numbered cues; Marathi/Hindi words accepted in free text.</li>
+</ul>
+<h3>How the constraint (C4) shaped the design</h3>
+<ul>
+<li>Content was cut to <b>one</b> concept (density vs water) and one transfer teaser; salt water is a <i>next-session</i> mission (spacing).</li>
+<li>Seven short states with a time budget; a calm “about N min left” estimate instead of a countdown.</li>
+<li>Save &amp; stop everywhere + exact resume, because her phone time is borrowed and gets interrupted.</li>
+<li>No login and no install: opening the link is the whole onboarding, so the 10 minutes are spent learning.</li>
+</ul>
+<h3>Practical fit</h3>
+<p>About 50 KB of code, no images or video, so it loads on patchy 4G; works without AI (labelled offline hints); data stays on the device; one-handed big buttons at 360 px.</p>
+
+<h2>D8 · Evaluation plan</h2>
+<table>
+<tr><th>Outcome</th><th>Assessment items / rubric</th><th>Log data collected (already logged by the app)</th><th>Success criterion</th></tr>
+<tr><td>LO1 Predict</td><td>Q1, Q2 (+ twins), Q4 sort; lab predictions; delayed transfer item one week later (“will a ship / an egg in salt water float?”)</td><td>Every <code>experiment</code> event: object, liquid, prediction, result, surprise flag; check answers with misconception tags</td><td>≥ 80% correct on Q4 (all 4) and on Q1/Q2 by the twin item; lab prediction accuracy rises from the first 2 drops to the last 2 drops; M1 rate falls from warm-up W1 to Q1 by ≥ 50%</td></tr>
+<tr><td>LO2 Calculate</td><td>Discover calculation (tries), Q3 numeric (±0.03)</td><td><code>density_calc</code> attempts and values; tool use (balance/cylinder) per object</td><td>≥ 75% correct within 2 tries; ≥ 70% use both tools before Discover</td></tr>
+<tr><td>LO3 Explain</td><td>Q5 rubric 0–2 (AI + rule; teacher moderates a 20% sample to check AI–teacher agreement)</td><td>Answer text, AI score, rule score, source (ai/fallback)</td><td>Mean ≥ 1.5 and ≥ 60% score 2; AI–teacher agreement ≥ 85%</td></tr>
+<tr><td>Affect &amp; C4</td><td>Confidence 1–5 before/after; session time</td><td><code>confidence_before/after</code>, <code>enter_step</code> timestamps, <code>save_stop</code>, <code>resume</code>, sessions count, hint requests and rung</td><td>Mean confidence +1; median full sequence ≤ 10 min; ≥ 70% of saved sessions resumed within 48 h</td></tr>
+</table>
+<p>Study design: 20–30 repeat learners, warm-up as pre-test, Check as immediate post-test, delayed transfer test after a week; compare hypothesis revisions (v1→v2) with post-test scores to test whether learning from surprises predicts conceptual change.</p>
+
+<h2>AI-use log and reflection</h2>
+<ol>
+<li><b>Claude Code (Claude Opus/Sonnet, desktop app)</b> — read the exam PDF/docx, compared cards, recommended P5-T2-L5-C4, wrote DESIGN.md, the app code (HTML/CSS/JS + serverless function), tested it in a browser, and drafted this report. Export: <i>(attached transcript)</i>.</li>
+<li><b>Google Gemini (in the app at runtime)</b> — hypothesis classification, Socratic hints, explanation scoring (prompts in D6).</li>
+</ol>
+<p><b>Reflection.</b> I used AI as a fast builder and a critic, but kept the decisions that carry the learning design. I chose the card for fit, not novelty: a deterministic simulation guarantees correct physics, while AI is limited to language tasks where it is strong and where errors are recoverable. I did not trust AI output blindly: every AI feature has a validator (enum checks, answer-leak filter, rubric cross-check) and a labelled fallback, and the D5 paths work even with AI switched off. The persona, misconceptions, feedback wording and the “no red crosses” rule came from thinking about Sneha’s anxiety and borrowed phone time; I reviewed and edited AI-written content for tone, simple language and scientific accuracy (density values checked against textbook figures). A limitation is that the AI hint quality depends on the model and was only spot-checked; a teacher moderation sample is part of the evaluation plan.</p>
+</body></html>
