@@ -194,7 +194,7 @@ const missionKey = () => (S.label === 'mass' || S.label === 'size') ? S.label : 
 const BANNED = /dens|mass\s*(÷|\/|divided)|divide|per\s*cm|g\/cm|wrong|incorrect|the answer is/i;
 async function ai(task, payload) {
   try {
-    const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 9000);
+    const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 12000);
     const r = await fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ task, ...payload }), signal: ctrl.signal });
     clearTimeout(tm);
     if (!r.ok) return null;

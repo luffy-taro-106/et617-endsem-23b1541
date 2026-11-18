@@ -2,7 +2,9 @@
 // Vercel serverless function. Key lives ONLY in the Vercel env var GEMINI_API_KEY.
 // Every model output is parsed + validated here; invalid output → 422 and the app uses its labelled offline fallback.
 
-const MODELS = [process.env.AI_MODEL, 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'].filter(Boolean);
+// Tried in order; a model that is busy (503), unknown (404) or slow (>4.5 s) is skipped. Total budget ~9 s.
+const MODELS = [process.env.AI_MODEL, 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest',
+  'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-3.8-flash'].filter(Boolean);
 
 const BANNED_HINT = /dens|mass\s*(÷|\/|divided)|divide|per\s*cm|g\/cm|wrong|incorrect|the answer is/i;
 const LABELS = ['mass', 'size', 'density', 'shape_air', 'material', 'other'];
@@ -72,24 +74,31 @@ Reply ONLY with JSON: {"score": 0|1|2, "misconception": "mass"|"size"|"none", "f
 async function callGemini(system, user) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('GEMINI_API_KEY not set');
-  let lastErr;
+  let lastErr; const t0 = Date.now();
   for (const model of MODELS) {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [{ role: 'user', parts: [{ text: user }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 400, responseMimeType: 'application/json', thinkingConfig: { thinkingBudget: 0 } },
-      }),
-    });
-    if (r.ok) {
-      const j = await r.json();
-      const text = j?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('') || '';
-      return { text, model };
-    }
-    lastErr = new Error(`${model}: HTTP ${r.status} ${(await r.text()).slice(0, 160)}`);
-    if (r.status !== 404 && r.status !== 400) break; // only fall through to the next model if this one is unknown/unsupported
+    if (Date.now() - t0 > 8000) break;
+    const ctrl = new AbortController(); const tm = setTimeout(() => ctrl.abort(), 4500);
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`, {
+        method: 'POST', signal: ctrl.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents: [{ role: 'user', parts: [{ text: user }] }],
+          generationConfig: { temperature: 0.3, maxOutputTokens: 600, responseMimeType: 'application/json' },
+        }),
+      });
+      clearTimeout(tm);
+      if (r.ok) {
+        const j = await r.json();
+        const text = j?.candidates?.[0]?.content?.parts?.filter((p) => !p.thought).map((p) => p.text || '').join('') || '';
+        if (text) return { text, model };
+        lastErr = new Error(`${model}: empty response`);
+      } else {
+        lastErr = new Error(`${model}: HTTP ${r.status} ${(await r.text()).slice(0, 120)}`);
+        if (r.status === 400 || r.status === 401 || r.status === 403) break; // bad key/request: other models won't help
+      }
+    } catch (e) { clearTimeout(tm); lastErr = new Error(`${model}: ${e.name === 'AbortError' ? 'timeout' : e.message}`); }
   }
   throw lastErr;
 }
