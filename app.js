@@ -9,7 +9,7 @@
 /* ----------------------------- DATA ----------------------------------- */
 const ID = '23B1541';
 const STORE = 'dubki-23b1541-v1';
-const LEARNER = 'Sneha';
+const nm = () => esc(S.name || 'scientist'); // learner's own name (asked on the Welcome screen)
 
 // Densities in g/cm³ (textbook values, rounded)
 const MATERIALS = {
@@ -152,7 +152,7 @@ function fresh() {
     rung: 0, hintsUsed: 0, support: null, noToolRuns: 0,
     disc: { row: null, tries: 0, done: false },
     check: { order: ['q1', 'q2', 'q3', 'q4', 'q5'], i: 0, res: {}, twinsUsed: {} },
-    conf1: null, log: [] };
+    conf1: null, log: [], name: '', activeMs: 0 };
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || fresh(); } catch (e) { S = fresh(); }
@@ -177,7 +177,7 @@ function header() {
   $('#stepLabel').textContent = S.step === 0 ? 'A 10-minute mission' :
     `Step ${S.step} of ${STEPS.length - 1} · ${STEPS[S.step].label} · about ${minsLeft()} min left`;
 }
-function go(step) { S.step = step; S.support = null; if (step === 2) S.hypBase = S.hyps.length; log('enter_step'); save(); render(); app.focus(); window.scrollTo(0, 0); }
+function go(step) { $('#toast').classList.remove('show'); S.step = step; S.support = null; if (step === 2) S.hypBase = S.hyps.length; log('enter_step'); save(); render(); app.focus(); window.scrollTo(0, 0); }
 function labelFromText(t) { // keyword fallback classifier (also used to cross-check the AI)
   t = (t || '').toLowerCase();
   if (/dens|for its size|packed|per ?cm|mass.*(volume|space|size)|(volume|space|size).*mass|compare.*water|than water/.test(t)) return 'density';
@@ -216,7 +216,7 @@ function welcome() {
   <section class="card fade">
     <div class="hero" aria-hidden="true">🫧🪵🔩</div>
     <h1>Float or sink? Let’s find out — together.</h1>
-    <p>Hi ${LEARNER}! This is a <b>10-minute science mission</b>. You will make guesses, drop things in water, and discover the secret rule yourself.</p>
+    <p>Hi${S.name ? ' ' + nm() : ' there'}! This is a <b>10-minute science mission</b>. You will make guesses, drop things in water, and discover the secret rule yourself.</p>
     <ul class="steps">
       <li><b>Guess</b> — no marks, no wrong answers.</li>
       <li><b>Test</b> in the lab — surprises are good news!</li>
@@ -226,7 +226,9 @@ function welcome() {
     ${resuming ? `<div class="fb info">👋 Welcome back! You stopped at <b>Step ${S.resumeStep}: ${STEPS[S.resumeStep].label}</b>. Your ${S.runs.length} experiment(s) are saved.</div>
       <button class="btn" data-a="resume">Continue from Step ${S.resumeStep}</button>
       <button class="btn quiet" data-a="restart">Start a fresh mission</button>`
-    : `<button class="btn" data-a="start">Start my mission →</button>`}
+    : `<label class="lbl" for="nameIn">What should we call you?</label>
+      <input type="text" id="nameIn" maxlength="24" placeholder="Your first name (optional)" autocomplete="given-name" value="${esc(S.name || '')}">
+      <button class="btn" data-a="start">Start my mission →</button>`}
   </section>`;
 }
 
@@ -351,6 +353,14 @@ function placeObj(animate) {
   const top = res === 'float' ? surf - h * (1 - f) : H - h - 4;
   if (!animate) { obj.style.transition = 'none'; }
   obj.style.top = top + 'px';
+  obj.classList.toggle('bob', res === 'float'); // floaters bob gently on the surface
+  if (animate && res === 'sink') { // sinkers release bubbles as they go down
+    for (let i = 0; i < 6; i++) {
+      const bb = document.createElement('span'); bb.className = 'bubble';
+      bb.style.left = `calc(50% + ${Math.round(Math.random() * 30 - 15)}px)`; bb.style.bottom = Math.round(h * 0.6) + 'px';
+      bb.style.animationDelay = (0.9 + i * 0.18).toFixed(2) + 's'; tank.appendChild(bb); setTimeout(() => bb.remove(), 3600);
+    }
+  }
   const tag = $('#resTag'); tag.textContent = res === 'float' ? `Floats · ${Math.round(f * 100)}% under` : 'Sinks to the bottom';
   tag.classList.add('show');
   if (animate) { const r = $('#ripple'); r.classList.remove('go'); void r.offsetWidth; r.classList.add('go'); }
@@ -382,7 +392,7 @@ async function giveHint(trigger) {
   $('#support').innerHTML = supportHTML();
   if (trigger === 'stuck') $('#support').scrollIntoView({ behavior: 'smooth', block: 'center' });
   const cur = S.hyps[S.hyps.length - 1] || { text: '', label: mk };
-  const out = await ai('nudge', { rung: S.rung, hypothesis: cur.text, label: mk,
+  const out = await ai('nudge', { rung: S.rung, name: S.name || '', hypothesis: cur.text, label: mk,
     last: last ? { object: objName(last.m, last.s), liquid: LIQUIDS[last.l].name, predicted: last.pred, result: last.res, mass_g: massOf(last.m, last.s), volume_cm3: SIZES[last.s].v } : null,
     table: S.runs.slice(-6).map((r) => ({ object: objName(r.m, r.s), liquid: LIQUIDS[r.l].name, mass_g: massOf(r.m, r.s), volume_cm3: SIZES[r.s].v, result: r.res })) });
   let hint = fallback, src = 'fallback';
@@ -407,6 +417,7 @@ function discover() {
     <h1>Let’s crack the secret together</h1>
     <p>Here are your water results with <b>mass</b> (⚖️) and <b>volume</b> (🧪) for each object.</p>
     <div id="dt">${tableWithD(rows)}</div>
+    ${S.disc.done ? `<p style="margin-top:10px"><b>📏 Your objects on the density line</b> <span class="muted">(g in each cm³)</span></p>${rulerHTML(rows)}` : ''}
   </section>
   ${S.disc.done ? conceptHTML(heavyF, tinyS) : `
   <section class="card">
@@ -430,6 +441,17 @@ function tableWithD(rows) {
   ${S.disc.done && !waterDrawn ? `<tr class="waterline"><td colspan="5">💧 WATER = 1 g in each cm³</td></tr>` : ''}
   </tbody></table></div>`;
 }
+// Topic-specific tool: a density number line with water at 1 — floaters land left, sinkers right
+function rulerHTML(rows) {
+  const seen = {}; const items = rows.filter((x) => !seen[x.m] && (seen[x.m] = 1)).sort((a, b) => MATERIALS[a.m].d - MATERIALS[b.m].d);
+  const pos = (d) => Math.min(96, Math.max(4, (d / 3) * 100));
+  return `<div class="ruler" role="img" aria-label="Density number line: water is at 1 gram per cubic centimetre">
+    <div class="zone zf">⬆️ floats</div><div class="zone zs">sinks ⬇️</div>
+    <div class="wl" style="left:${pos(1)}%"><span>💧 water = 1</span></div>
+    ${items.map((x, i) => { const d = MATERIALS[x.m].d; return `<div class="mk" style="--x:${pos(d)}%;top:${i % 2 ? 50 : 18}px;animation-delay:${(i * 0.15).toFixed(2)}s" title="${MATERIALS[x.m].name}: ${d} g/cm³">${MATERIALS[x.m].emoji}<small>${d > 3 ? d + ' →' : d}</small></div>`; }).join('')}
+    <div class="axis"><span>0</span><span>1</span><span>2</span><span>3+</span></div>
+  </div>`;
+}
 function conceptHTML(heavyF, tinyS) {
   return `<section class="card fade">
     <h2>🎯 So what really decides?</h2>
@@ -440,6 +462,7 @@ function conceptHTML(heavyF, tinyS) {
       <li>What decides is <b>how much mass is packed into each cm³</b>. Scientists call this <mark><b>density</b> = mass ÷ volume</mark>.</li>
     </ol>
     <div class="fb info">💧 Water has <b>1 g in each cm³</b>.<br>⬆️ Less than 1 → <b>floats</b>. &nbsp; ⬇️ More than 1 → <b>sinks</b>.<br>🔩 Cutting iron smaller does not change its density — that is why the tiny nail still sinks.</div>
+    <p class="gloss">🗣️ मराठीत: density = <b>घनता</b> · mass = <b>वस्तुमान</b> · volume = <b>आकारमान</b> · float = <b>तरंगणे</b> · sink = <b>बुडणे</b></p>
     <p class="muted" style="font-size:.88rem">Bonus: a potato (1.08) sinks in tap water but floats in very salty water (1.2). Try it later! 🥔</p>
     <button class="btn" data-a="next">Check my understanding →</button>
   </section>`;
@@ -494,7 +517,7 @@ function summary() {
   app.innerHTML = `
   <section class="card fade">
     <div class="hero" aria-hidden="true">🏅</div>
-    <h1>You did it, ${LEARNER}!</h1>
+    <h1>You did it, ${nm()}!</h1>
     <p>You didn’t just learn a rule — you <b>discovered</b> it from your own experiments.</p>
     <div class="fb ok">It’s <b>not weight</b>. It’s <b>not size</b>. It’s <mark><b>density</b></mark> — how much mass is packed into each cm³, compared with water.</div>
     ${S.hyps.length > 1 ? `<div class="idea">💡 Your idea grew: ${S.hyps.map((h, i) => `v${i + 1} “${esc(h.text)}”`).join(' → ')}<br>Changing your idea when the evidence says so is what real scientists do. 👏</div>` : ''}
@@ -508,6 +531,10 @@ function summary() {
     <div class="scale">${['😟', '😕', '😐', '🙂', '😄'].map((e, i) => `<button class="${S.conf1 === i + 1 ? 'sel' : ''}" data-a="conf1" data-v="${i + 1}">${e}</button>`).join('')}</div>
     ${S.conf1 ? `<div class="fb info">${S.conf1 > (S.profile.conf0 || 3) ? 'Your confidence went up! 🚀 That came from your own evidence.' : 'That’s okay. Confidence grows with practice — tomorrow’s 10-minute mission is the salt-water surprise 🥔🧂.'}</div>` : ''}
   </section>
+  <section class="card">
+    <h2>🧭 Your mission journey</h2>
+    ${statsHTML()}
+  </section>
   <section class="card soft">
     <h2>🗓️ Next mission (tomorrow, 10 min)</h2>
     <p>Why does a potato sink in tap water but float in very salty water? Make a prediction tonight!</p>
@@ -515,6 +542,14 @@ function summary() {
   </section>`;
 }
 
+// C4 + D8 evidence: active time (only while the app is visible), sessions, drops, surprises, hints, idea versions
+function statsHTML() {
+  const mins = Math.max(1, Math.round((S.activeMs || 0) / 60000));
+  const surprises = S.runs.filter((r) => r.pred !== r.res).length;
+  const cell = (n, t) => `<div class="stat"><b>${n}</b><span>${t}</span></div>`;
+  return `<div class="stats">${cell(mins + ' min', 'active time')}${cell(S.sessions, S.sessions === 1 ? 'session' : 'sessions')}${cell(S.runs.length, 'drops')}${cell(surprises, 'surprises')}${cell(S.hintsUsed, 'hints')}${cell(S.hyps.length, S.hyps.length === 1 ? 'idea version' : 'idea versions')}</div>
+    <p class="muted" style="font-size:.85rem;margin-top:8px">${mins <= 10 ? '⏱️ Fits inside one 10-minute mission.' : '⏱️ Split across short sessions — that is fine; you resumed where you stopped.'}</p>`;
+}
 function about() {
   header(); $('#stepLabel').textContent = 'About';
   app.innerHTML = `
@@ -530,6 +565,15 @@ function about() {
       <tr><th>Constraint</th><td>C4 – 10-minute sessions, stop &amp; resume</td></tr>
     </tbody></table>
     <p class="muted" style="font-size:.88rem;margin-top:10px">Physics is computed in the app (no AI) so results are always correct. AI (Gemini) only reads free-text ideas, writes Socratic hints and checks explanations — every AI output is checked before you see it, with a labelled offline fallback. Your progress stays on this device; there is no login.</p>
+    <h2 style="margin-top:16px">🧠 How Dubki Lab adapts to you</h2>
+    <ul class="adapt">
+      <li><b>Your profile:</b> your warm-up guesses and your idea choose your lab mission (a weight mission or a size mission).</li>
+      <li><b>Your results:</b> every surprising result makes the next hint one step stronger (1 → 4), but it never tells you the answer.</li>
+      <li><b>Your answers:</b> a misconception answer brings a “one more like it” question. If it happens again, the app takes you back to the lab with the exact objects to test.</li>
+      <li><b>Your actions:</b> dropping things without weighing or measuring shows a tip; “I’m stuck” gives a stronger hint.</li>
+    </ul>
+    <h2 style="margin-top:16px">📊 My mission so far</h2>
+    ${statsHTML()}
     <button class="btn ghost" data-a="showlog">Show my learning log (for teacher / research)</button>
     <pre class="log" id="logBox" hidden></pre>
     <button class="btn" data-a="closeabout">← Back to my mission</button>
@@ -542,9 +586,9 @@ document.addEventListener('click', async (e) => {
   const a = b.dataset.a, v = b.dataset.v;
   const nextStep = () => go(S.step + 1);
   switch (a) {
-    case 'start': log('start'); nextStep(); break;
-    case 'resume': { const st = S.resumeStep; S.resumeStep = 0; S.sessions++; log('resume', { to: st }); go(st); break; }
-    case 'restart': S = fresh(); save(); log('restart'); render(); break;
+    case 'start': { const n = $('#nameIn'); if (n && n.value.trim()) S.name = n.value.trim().slice(0, 24); log('start'); nextStep(); break; }
+    case 'resume': { const st = S.resumeStep; S.resumeStep = 0; log('resume', { to: st }); go(st); break; }
+    case 'restart': { const keepName = S.name; S = fresh(); S.name = keepName; save(); log('restart'); render(); break; }
     case 'next': nextStep(); break;
     case 'back': go(3); break;
     case 'warm': S.profile[b.dataset.q] = v; log('warmup', { q: b.dataset.q, v }); save(); warmup(); break;
@@ -672,7 +716,7 @@ $('#saveBtn').onclick = () => {
   if (S.step === 0) { toast('Nothing to save yet — start your mission 🙂'); return; }
   S.resumeStep = S.step; log('save_stop', { at: S.step }); S.step = 0; save();
   header();
-  app.innerHTML = `<section class="card fade"><div class="hero">💾</div><h1>Saved! Rest well, ${LEARNER}.</h1>
+  app.innerHTML = `<section class="card fade"><div class="hero">💾</div><h1>Saved! Rest well, ${nm()}.</h1>
   <p>You stopped at <b>Step ${S.resumeStep}: ${STEPS[S.resumeStep].label}</b>. Your ideas and ${S.runs.length} experiment(s) are saved on this phone.</p>
   <p class="muted">Close the app anytime. Next time you open it, you’ll continue right here.</p>
   <button class="btn" data-a="resume">Continue now</button></section>`;
@@ -682,4 +726,6 @@ $('#homeBtn').onclick = () => { if (S.step > 0) { S.resumeStep = S.step; S.step 
 
 // On load: if a mission is in progress, show the Welcome-back screen (C4 resume)
 if (S.step > 0) { S.resumeStep = S.step; S.step = 0; S.sessions++; save(); }
+// Active-time tracker (C4): counts only while the mission is open and visible
+setInterval(() => { if (document.visibilityState === 'visible' && (S.step > 0)) { S.activeMs = (S.activeMs || 0) + 5000; save(); } }, 5000);
 render();

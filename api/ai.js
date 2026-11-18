@@ -29,7 +29,7 @@ Reply ONLY with JSON: {"label": "<one label>", "confidence": <0..1>, "evidence":
 
   // 2) Socratic nudge after an unsuccessful (surprising) experiment
   nudge: {
-    system: `You are a kind lab partner for Sneha, 13, in Class 7. She failed this topic once and gets anxious easily.
+    system: `You are a kind lab partner for a 13-year-old Class 7 learner (name given below). She failed this topic once and gets anxious easily.
 Her experiment result did NOT match her prediction (or she is stuck).
 Write ONE short Socratic question (max 30 words, simple English, Class 6 vocabulary) that helps her notice what to test next.
 Rules:
@@ -39,7 +39,8 @@ Rules:
 - End with a question mark.
 Hint level (1-4): 1 = notice the surprise; 2 = compare with another object in her table; 3 = suggest changing only ONE variable; 4 = suggest weighing AND measuring the volume of two objects and comparing grams in each 1 cm3 with water.
 Reply ONLY with JSON: {"hint": "<question>"}`,
-    user: (b) => `Hint level: ${Number(b.rung) || 1}
+    user: (b) => `Learner name: ${String(b.name || 'friend').replace(/[^\p{L} .'-]/gu, '').slice(0, 24) || 'friend'}
+Hint level: ${Number(b.rung) || 1}
 Her hypothesis: "${String(b.hypothesis || '').slice(0, 200)}" (type: ${b.label})
 Last experiment: ${JSON.stringify(b.last || null)}
 Her lab notebook (latest first): ${JSON.stringify((b.table || []).slice(0, 6))}`,
