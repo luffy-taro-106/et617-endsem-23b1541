@@ -362,10 +362,10 @@ function supportHTML() {
     <div class="hint" id="hintBox">${sp.hint ? `${esc(sp.hint)}<br>${tagAI(sp.src)}` : '<span class="spinner"></span> Thinking of a helpful question…'}</div>
     <p class="muted" style="font-size:.85rem">Hint ${S.rung} of 4 · tap again for a stronger hint.</p></section>`;
   if (sp.kind === 'match') return `<section class="card fade" style="border-left:5px solid var(--ok)"><h2>✅ Just as you predicted!</h2>
-    <p>The ${esc(sp.obj)} ${sp.res === 'float' ? 'floated' : 'sank'}. Nice. Now try to <b>break your idea</b> — find a result that does not fit it. That is how scientists check.</p></section>`;
+    <p>The ${esc(sp.obj.toLowerCase())} ${sp.res === 'float' ? 'floated' : 'sank'}. Nice. Now try to <b>break your idea</b> — find a result that does not fit it. That is how scientists check.</p></section>`;
   return `<section class="card support fade" aria-live="polite">
     <h2>🔍 A surprise! Scientists love these.</h2>
-    <p>You predicted <b>${sp.pred}</b>, but the <b>${esc(sp.obj)}</b> <b>${sp.res === 'float' ? 'floated' : 'sank'}</b>. This is not a mistake — it is <mark>new evidence</mark>.</p>
+    <p>You predicted <b>${sp.pred}</b>, but the <b>${esc(sp.obj.toLowerCase())}</b> <b>${sp.res === 'float' ? 'floated' : 'sank'}</b>. This is not a mistake — it is <mark>new evidence</mark>.</p>
     <div class="hint" id="hintBox">${sp.hint ? `${esc(sp.hint)}<br>${tagAI(sp.src)}` : '<span class="spinner"></span> Thinking of a helpful question…'}</div>
     <p class="muted" style="font-size:.85rem">Hint ${S.rung} of 4 · we won’t just tell you the answer — you’ll find it.</p>
     <div class="row"><button class="btn ghost" data-a="revise">✏️ Change my idea</button><button class="btn ghost" data-a="keep">🧪 Test more first</button></div>
