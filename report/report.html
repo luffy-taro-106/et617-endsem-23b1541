@@ -98,23 +98,24 @@ S5 ─▶ S6 Summary: LO1–LO3 "✔ Strong / ↻ Practise once more", idea v1�
 </ul>
 
 <h2>D5 · Two contrasting learner scenarios (run on the live app)</h2>
+<p class="muted">Both paths were run on the live URL https://et617-23b1541.vercel.app at 18:51–18:53 on a 390 px phone viewport. The Gemini key had not yet been added to Vercel at that moment, so AI features show the clearly labelled “📘 Offline hint (AI unavailable)” fallback; the live-model outputs for the same inputs are recorded in D6.</p>
 <h3>(a) Learner who responds correctly</h3>
-<p>Warm-up: nail sinks; tiny piece sinks. Idea: “It depends on what it is made of”. Lab: predicts the wooden log floats → <b>“✅ Just as you predicted! Now try to break your idea.”</b> No hint ladder appears. Discover: types 0.5 first time → concept card. Check: Q1 c, Q2 b, Q3 0.92 + float, Q4 all correct, Q5 density explanation → score 2, no twin items inserted, goes straight to the summary with all three outcomes “✔ Strong”.</p>
+<p>Warm-up: nail sinks; tiny piece sinks. Idea: “It depends on what it is made of”. Lab: predicts the tiny eraser sinks, the iron nail sinks and the wooden log floats (after weighing it: 3.0 kg, 6000 cm³) → <b>“✅ Just as you predicted! Now try to break your idea.”</b> No hint ladder appears. Discover: types 0.5 first time → concept card. Check: Q1 c, Q2 b, Q3 0.92 + float, Q4 all correct, Q5 density explanation → score 2, no twin items inserted, goes straight to the summary with all three outcomes “✔ Strong”.</p>
 <div class="shots" id="shotsA">
- <figure><img src="img/a1.png" alt=""><figcaption>a1 · Prediction confirmed</figcaption></figure>
- <figure><img src="img/a2.png" alt=""><figcaption>a2 · Check answered correctly</figcaption></figure>
- <figure><img src="img/a3.png" alt=""><figcaption>a3 · Summary – all outcomes strong</figcaption></figure>
+ <figure><img src="img/a1.jpg" alt=""><figcaption>a1 · Prediction confirmed</figcaption></figure>
+ <figure><img src="img/a2.jpg" alt=""><figcaption>a2 · Check answered correctly</figcaption></figure>
+ <figure><img src="img/a3.jpg" alt=""><figcaption>a3 · Summary – all outcomes strong</figcaption></figure>
 </div>
 <h3>(b) Learner showing misconception M1 (“heavy sinks, light floats”)</h3>
-<p>Warm-up: “the log sinks – it is heavier”. Idea chip: “Heavy things sink, light things float”. Lab mission adapts: “Test your idea with the heaviest and the lightest thing”. She predicts the 3 kg log <b>sinks</b> → it floats → <b>“🔍 A surprise! Scientists love these… not a mistake — it is new evidence”</b> + hint 1 of 4. She predicts the 16 g nail <b>floats</b> → it sinks → hint 2. She taps “Change my idea” → v2 “heavy for its size things sink” (shown as v1 → v2). In Check she picks “log sinks, nail floats” → M1 feedback + twin Q1b; she repeats M1 on the twin → <b>“🧪 Show me in the lab”</b> sends her back to the log/nail pair, then back to Check. Summary shows “↻ Practise once more” for LO1/LO3 (no red crosses, no score) and her confidence change.</p>
+<p>Warm-up: “the log sinks – it is heavier”. Idea chip: “Heavy things sink, light things float”. Lab mission adapts: “Test your idea with the heaviest and the lightest thing”. She predicts the 3 kg log <b>sinks</b> → it floats → <b>“🔍 A surprise! Scientists love these… not a mistake — it is new evidence”</b> + hint 1 of 4. She predicts the 16 g nail <b>floats</b> → it sinks → hint 2. She taps “✏️ Change my idea” and writes in her own mixed Marathi/English: v2 “jad vastu budtat pan te tyanchya size pramane — heavy for its size things sink” (shown as <s>v1</s> → v2). Because she dropped two objects without weighing them, the app also nudges her: “Tip: weigh it ⚖️ and measure it 🧪 — the numbers hide a pattern” (interaction-based adaptivity, visible in b2). In Check she picks “log sinks, nail floats” → M1 feedback + twin Q1b; she repeats M1 on the twin → <b>“🧪 Show me in the lab”</b> sends her back to the log/nail pair, then back to Check. Summary shows “↻ Practise once more” for LO1/LO3 (no red crosses, no score) and her confidence change.</p>
 <div class="shots" id="shotsB">
- <figure><img src="img/b1.png" alt=""><figcaption>b1 · Surprise support after a failed prediction</figcaption></figure>
- <figure><img src="img/b2.png" alt=""><figcaption>b2 · Hypothesis revised v1 → v2</figcaption></figure>
- <figure><img src="img/b3.png" alt=""><figcaption>b3 · M1 feedback + adaptive “Show me in the lab”</figcaption></figure>
+ <figure><img src="img/b1.jpg" alt=""><figcaption>b1 · Surprise support after a failed prediction</figcaption></figure>
+ <figure><img src="img/b2.jpg" alt=""><figcaption>b2 · Hypothesis revised v1 → v2</figcaption></figure>
+ <figure><img src="img/b3.jpg" alt=""><figcaption>b3 · M1 feedback + adaptive “Show me in the lab”</figcaption></figure>
 </div>
 
 <h2>D6 · AI functionality specification</h2>
-<p>Model: Google Gemini (<code>gemini-2.5-flash</code>, falling back to <code>gemini-flash-latest</code>) via <code>/api/ai</code> (Vercel serverless; key only in the <code>GEMINI_API_KEY</code> environment variable). temperature 0.3, JSON output mode, 9 s client timeout. <b>The physics (float/sink, depth, masses, volumes) is never produced by AI</b> — it is computed in code, so experiment results are always correct. Every AI output is validated on the server <i>and again</i> in the browser before the learner sees it.</p>
+<p>Model: Google Gemini via <code>/api/ai</code> (Vercel serverless; key only in the <code>GEMINI_API_KEY</code> environment variable), failover chain <code>gemini-3.5-flash-lite → gemini-3.1-flash-lite → gemini-flash-lite-latest → gemini-3.5-flash → gemini-flash-latest → gemini-3.8-flash</code> (4.5 s per model, ~9 s server budget, 12 s browser timeout). temperature 0.3, JSON output mode. <b>The physics (float/sink, depth, masses, volumes) is never produced by AI</b> — it is computed in code, so experiment results are always correct. Every AI output is validated on the server <i>and again</i> in the browser before the learner sees it.</p>
 
 <h3>AI-1 · Hypothesis classifier</h3>
 <table><tr><th>What it does</th><td>Reads the learner’s free-text hypothesis (English mixed with Marathi/Hindi words) and labels its idea type, which selects the lab mission and the hint ladder.</td></tr>
