@@ -172,6 +172,16 @@ Feedback: max 35 words, warm, simple English, start with what is good, never use
 Reply ONLY with JSON: {"score": 0|1|2, "misconception": "mass"|"size"|"none", "feedback": "&lt;text&gt;"}
 USER: Student answer: """The log is light so it floats"""</pre>
 
+<h3>Actual outputs recorded from the live model (18 Nov 2026, during the exam)</h3>
+<table>
+<tr><th>Feature</th><th>Learner input</th><th>Validated model output</th><th>Model</th></tr>
+<tr><td>AI-1 classify</td><td>“jad vastu budtat, halki vastu tarangtat” (Marathi: heavy things sink, light things float)</td><td><code>{"label":"mass","confidence":1,"evidence":"jad vastu budtat, halki vastu tarangtat"}</code></td><td>gemini-3.1-flash-lite</td></tr>
+<tr><td>AI-2 nudge (rung 1)</td><td>Log predicted to sink, it floated (3000 g, 6000 cm³)</td><td>“That is interesting, the wooden log is quite heavy, but it still floats; what do you notice about how much space it takes up compared to its weight?” — passed: has “?”, ≤ 40 words, no answer words</td><td>gemini-3.1-flash-lite</td></tr>
+<tr><td>AI-3 evaluate</td><td>“It is not about weight, it is how much mass is packed in each cm3 compared to water…”</td><td><code>score 2, none</code> · “Great job! You clearly explained density by comparing mass in a given space to water. Next step: Try to use this idea to explain why a heavy metal ship can float too.”</td><td>gemini-3.5-flash-lite</td></tr>
+<tr><td>AI-3 evaluate</td><td>“The log is light so it floats”</td><td><code>score 0, mass</code> · “You are thinking about how heavy the log is! To understand floating, try comparing the log's mass to the amount of space it takes up, and see how that compares to water.”</td><td>gemini-3.1-flash-lite</td></tr>
+</table>
+<p><b>Reliability handling observed in practice:</b> during the exam Gemini returned 503 “high demand” and 404 (model retired for new users: gemini-2.5-flash) errors. The endpoint therefore tries a chain of models (3.5-flash-lite → 3.1-flash-lite → flash-lite-latest → 3.5-flash → flash-latest → 3.8-flash), 4.5 s each, ~9 s total, then the browser falls back to the labelled offline content. The API key is stored only as a Vercel environment variable (never committed).</p>
+
 <h2>D7 · Pedagogical rationale</h2>
 <h3>How the design supports learning</h3>
 <ul>
