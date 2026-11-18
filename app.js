@@ -505,6 +505,7 @@ function finishQ(Q, rec) {
   if (rec.tag !== 'ok' && rec.tag !== 'calc' && Q.twin && !c.twinsUsed[Q.id]) { c.twinsUsed[Q.id] = 1; c.order.splice(c.i + 1, 0, Q.twin); rec.fbHTML += `<p class="muted" style="font-size:.85rem">Let’s try one more like this, so the idea really sticks.</p>`; }
   if (Q.twinOf && rec.tag !== 'ok') rec.toLab = rec.tag;
   c.res[Q.id] = rec; log('answer', { q: Q.id, tag: rec.tag, v: rec.v || rec.num || rec.text || rec.ans }); save(); check();
+  if (typeof buddy !== 'undefined') buddy.ask(rec.tag === 'ok' ? 'correct' : 'surprise'); // viva: feelings buddy
 }
 function fbBox(tag, html, extra = '') { return `<div class="fb ${tag === 'ok' ? 'ok' : 'mis'}">${html}${extra}</div>`; }
 
@@ -622,6 +623,7 @@ document.addEventListener('click', async (e) => {
       S._justDropped = true; const pred = S.pred; S.pred = null;
       S.support = pred === res ? { kind: 'match', obj: objName(mat, size), res } : null;
       save(); lab(); requestAnimationFrame(() => requestAnimationFrame(() => placeObj(true)));
+      if (typeof buddy !== 'undefined') buddy.ask(pred === res ? 'correct' : 'surprise', 2200); // viva: feelings buddy
       if (pred !== res) setTimeout(() => giveHint('surprise'), 900);
       else if (S.noToolRuns >= 2 && !S.usedTool) setTimeout(() => toast('Tip: weigh it ⚖️ and measure it 🧪 — the numbers hide a pattern.'), 1300);
       break;
@@ -633,7 +635,7 @@ document.addEventListener('click', async (e) => {
     case 'dcheck': {
       const rows = uniqueRows(); const r = rows[S.disc.row] || rows[0]; const val = parseFloat($('#dIn').value); const ans = MATERIALS[r.m].d;
       S.disc.tries++;
-      if (Math.abs(val - ans) <= Math.max(0.05, ans * 0.05)) { S.disc.done = true; log('density_calc', { ok: true, val }); save(); discover(); toast('Yes! ' + ans + ' g in each cm³ 🎉'); }
+      if (Math.abs(val - ans) <= Math.max(0.05, ans * 0.05)) { S.disc.done = true; log('density_calc', { ok: true, val }); save(); discover(); toast('Yes! ' + ans + ' g in each cm³ 🎉'); if (typeof buddy !== 'undefined') buddy.ask('correct'); }
       else {
         log('density_calc', { ok: false, val });
         const m = massOf(r.m, r.s), vv = SIZES[r.s].v;

@@ -149,3 +149,27 @@ pre.log{white-space:pre-wrap;font-size:.72rem;max-height:260px;overflow:auto;bac
 .stat b{display:block;font-size:1.15rem;color:var(--teal)}
 .stat span{font-size:.72rem;color:var(--muted)}
 .adapt{margin:6px 0 0 18px;padding:0;font-size:.9rem}.adapt li{margin:4px 0}
+
+/* viva: Bubbles 🫧 feelings buddy */
+#buddy{position:fixed;right:14px;bottom:78px;z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.bd-ball{width:58px;height:58px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#ffffff,#bdf0f7 45%,#57c4d8);box-shadow:0 6px 18px rgba(20,120,140,.35),inset 0 -4px 8px rgba(0,80,100,.15);font-size:1.8rem;display:flex;align-items:center;justify-content:center;animation:bdfloat 3s ease-in-out infinite;order:2}
+.bd-ball:active{transform:scale(.92)}
+@keyframes bdfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+#buddy.done .bd-ball{animation:bdpop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bdpop{0%{transform:scale(1.5)}100%{transform:scale(1)}}
+.bd-card{order:1;width:min(300px,86vw);background:#fff;border-radius:20px 20px 6px 20px;box-shadow:0 12px 34px rgba(15,60,70,.25);padding:12px 14px;transform-origin:bottom right;transform:scale(0);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .25s;border:2px solid #bdf0f7}
+#buddy.open .bd-card{transform:scale(1);opacity:1;pointer-events:auto}
+#buddy.open .bd-ball{animation:bdwiggle .8s ease-in-out infinite}
+@keyframes bdwiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.bd-head{display:flex;align-items:center;gap:6px;font-size:.9rem;color:var(--teal)}
+.bd-av{font-size:1.2rem}
+.bd-x{margin-left:auto;background:none;border:0;font-size:1.3rem;color:var(--muted);line-height:1;padding:2px 6px}
+.bd-msg{font-size:1rem;margin:8px 0;font-weight:600;color:var(--ink)}
+.bd-moods{display:flex;justify-content:space-between;gap:4px}
+.bd-mood{flex:1;font-size:1.6rem;padding:6px 0;border-radius:14px;border:2px solid var(--line);background:#f7fcfb;transition:transform .15s}
+.bd-mood:hover,.bd-mood:focus{transform:scale(1.15)}
+.bd-mood.picked{border-color:var(--teal);background:#e9f6f8;transform:scale(1.2)}
+.bd-small{font-size:.85rem;color:var(--muted);margin:8px 0 4px}
+.bd-break{width:100%;min-height:44px;border-radius:12px;border:2px solid var(--teal);background:#fff;color:var(--teal);font-weight:650}
+.bd-spark{position:absolute;right:20px;bottom:20px;font-size:1.3rem;pointer-events:none;animation:bdspark 1.2s ease-out both}
+@keyframes bdspark{0%{opacity:1;transform:translate(0,0) scale(.5)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3)}}
